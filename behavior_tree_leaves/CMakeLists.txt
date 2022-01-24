@@ -141,14 +141,8 @@ set(COMMON_LIB ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 
 add_executable(action_client src/action_client.cpp)
-
-target_link_libraries(
-  action_client
-  ${catkin_LIBRARIES}
-)
-
-add_dependencies(
- action_client
+target_link_libraries(action_client ${catkin_LIBRARIES})
+add_dependencies(action_client
   ${behavior_tree_leaves_EXPORTED_TARGETS}
   ${PROJECT_NAME}_generate_messages_cpp
   behavior_tree_core_generate_messages_cpp
@@ -156,52 +150,121 @@ add_dependencies(
 
 
 add_executable(condition_client src/condition_client.cpp)
-
-
-target_link_libraries(
-  condition_client
-  ${catkin_LIBRARIES}
-)
-
+target_link_libraries(condition_client  ${catkin_LIBRARIES})
 add_dependencies(
  condition_client
   ${behavior_tree_leaves_EXPORTED_TARGETS}
   ${PROJECT_NAME}_generate_messages_cpp
   behavior_tree_core_generate_messages_cpp
-
 )
 
 
-
-add_executable(action_example example_nodes/cpp/action_example.cpp)
+#-------------------Custom Nodes Added-----------------------#
+add_executable(Navi_H example_nodes/cpp/demotree1/Navi_H.cpp)
 
 target_link_libraries(
-  action_example
+  Navi_H
   ${catkin_LIBRARIES}
 )
-
 add_dependencies(
- action_example
+  Navi_H
   ${behavior_tree_leaves_EXPORTED_TARGETS}
   ${PROJECT_NAME}_generate_messages_cpp
   behavior_tree_core_generate_messages_cpp
 )
 
 
-add_executable(condition_example example_nodes/cpp/condition_example.cpp)
+add_executable(BatteryOK example_nodes/cpp/demotree1/BatteryOK.cpp)
 
 target_link_libraries(
-  condition_example
+  BatteryOK
   ${catkin_LIBRARIES}
 )
-
 add_dependencies(
- condition_example
+  BatteryOK
   ${behavior_tree_leaves_EXPORTED_TARGETS}
   ${PROJECT_NAME}_generate_messages_cpp
   behavior_tree_core_generate_messages_cpp
 )
 
+add_executable(navitoA example_nodes/cpp/demotree1/navitoA.cpp)
+target_link_libraries(
+  navitoA
+  ${catkin_LIBRARIES}
+)
+
+add_executable(flashLED example_nodes/cpp/demotree1/flashLED.cpp)
+target_link_libraries(
+  flashLED
+  ${catkin_LIBRARIES}
+)
 
 
+add_executable(atA example_nodes/cpp/demotree1/atA.cpp)
+target_link_libraries(
+  atA
+  ${catkin_LIBRARIES}
+)
 
+add_executable(stop example_nodes/cpp/demotree1/stop.cpp)
+target_link_libraries(
+  stop
+  ${catkin_LIBRARIES}
+)
+
+#Added for New Timed Forward Reverse-------------------
+add_executable(forward example_nodes/cpp/demotree1/forward.cpp)
+target_link_libraries(
+  forward
+  ${catkin_LIBRARIES}
+)
+
+add_executable(reverse example_nodes/cpp/demotree1/reverse.cpp)
+target_link_libraries(
+  reverse
+  ${catkin_LIBRARIES}
+)
+
+add_executable(lessfive example_nodes/cpp/demotree1/lessfive.cpp)
+target_link_libraries(
+  lessfive
+  ${catkin_LIBRARIES}
+)
+
+add_executable(lessfive2 example_nodes/cpp/demotree1/lessfive2.cpp)
+target_link_libraries(
+  lessfive2
+  ${catkin_LIBRARIES}
+)
+
+add_executable(noforward_key example_nodes/cpp/demotree1/noforward_key.cpp)
+target_link_libraries(
+  noforward_key
+  ${catkin_LIBRARIES}
+)
+
+add_executable(noreverse_key example_nodes/cpp/demotree1/noreverse_key.cpp)
+target_link_libraries(
+  noreverse_key
+  ${catkin_LIBRARIES}
+)
+
+add_executable(nokey_press example_nodes/cpp/demotree1/nokey_press.cpp)
+target_link_libraries(
+  nokey_press
+  ${catkin_LIBRARIES}
+)
+
+add_executable(get_key example_nodes/cpp/demotree1/get_key.cpp)
+target_link_libraries(
+  get_key
+  ${catkin_LIBRARIES}
+)
+
+add_executable(stop_key example_nodes/cpp/demotree1/stop_key.cpp)
+target_link_libraries(
+  stop_key
+  ${catkin_LIBRARIES}
+)
+
+###--------------------------------------------------
