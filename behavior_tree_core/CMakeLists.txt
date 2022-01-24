@@ -118,6 +118,11 @@ target_link_libraries(gtest_ros
   ${PROJECT_NAME}
   ${GTEST_LIBRARIES})
 
+add_executable(demo1 src/rehab_robot_demo/demo1.cpp)
+target_link_libraries(demo1
+  ${catkin_LIBRARIES}
+  ${PROJECT_NAME}
+  ${GTEST_LIBRARIES})
 
 #add_executable(ros_test src/ros_test.cpp ${BTSrcLibrary} ${BTHeadLibrary})
 #target_link_libraries(ros_test ${catkin_LIBRARIES} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
