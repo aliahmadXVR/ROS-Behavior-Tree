@@ -1,0 +1,13 @@
+<launch>
+
+<node name="atA"              pkg="behavior_tree_leaves"  type="atA"               output="screen" />
+<node name="batteryOK"        pkg="behavior_tree_leaves"  type="batteryOK"         output="screen" /> 
+<node name="navi_to_A"        pkg="behavior_tree_leaves"  type="navi_to_A"         output="screen" /> 
+<node name="navi_to_H"        pkg="behavior_tree_leaves"  type="navi_to_H"         output="screen" /> 
+
+
+  
+</launch>
+
+<!-- Use this command for seperate window-->
+<!--launch-prefix="xterm -e"--> 

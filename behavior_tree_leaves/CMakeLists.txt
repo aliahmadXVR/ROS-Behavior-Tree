@@ -15,6 +15,8 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   behavior_tree_core
   roslaunch
+  #simple_navigation_goals
+  move_base_msgs
 
 )
 roslaunch_add_file_check(launch)
@@ -173,36 +175,9 @@ add_dependencies(
   behavior_tree_core_generate_messages_cpp
 )
 
-
-add_executable(BatteryOK example_nodes/cpp/demotree1/BatteryOK.cpp)
-
-target_link_libraries(
-  BatteryOK
-  ${catkin_LIBRARIES}
-)
-add_dependencies(
-  BatteryOK
-  ${behavior_tree_leaves_EXPORTED_TARGETS}
-  ${PROJECT_NAME}_generate_messages_cpp
-  behavior_tree_core_generate_messages_cpp
-)
-
 add_executable(navitoA example_nodes/cpp/demotree1/navitoA.cpp)
 target_link_libraries(
   navitoA
-  ${catkin_LIBRARIES}
-)
-
-add_executable(flashLED example_nodes/cpp/demotree1/flashLED.cpp)
-target_link_libraries(
-  flashLED
-  ${catkin_LIBRARIES}
-)
-
-
-add_executable(atA example_nodes/cpp/demotree1/atA.cpp)
-target_link_libraries(
-  atA
   ${catkin_LIBRARIES}
 )
 
@@ -267,4 +242,49 @@ target_link_libraries(
   ${catkin_LIBRARIES}
 )
 
+#----------------FOR DEMO-2-----------------------#
+add_executable(atA example_nodes/cpp/demotree2/atA.cpp)
+target_link_libraries(atA  ${catkin_LIBRARIES})
+add_dependencies(
+  atA
+  ${behavior_tree_leaves_EXPORTED_TARGETS}
+  ${PROJECT_NAME}_generate_messages_cpp
+  behavior_tree_core_generate_messages_cpp
+)
+
+add_executable(batteryOK example_nodes/cpp/demotree2/batteryOK.cpp)
+target_link_libraries(batteryOK  ${catkin_LIBRARIES})
+add_dependencies(
+  batteryOK
+  ${behavior_tree_leaves_EXPORTED_TARGETS}
+  ${PROJECT_NAME}_generate_messages_cpp
+  behavior_tree_core_generate_messages_cpp
+)
+
+add_executable(navi_to_A example_nodes/cpp/demotree2/navi_to_A.cpp)
+target_link_libraries(navi_to_A  ${catkin_LIBRARIES})
+add_dependencies(
+  navi_to_A
+  ${behavior_tree_leaves_EXPORTED_TARGETS}
+  ${PROJECT_NAME}_generate_messages_cpp
+  behavior_tree_core_generate_messages_cpp
+)
+
+add_executable(navi_to_H example_nodes/cpp/demotree2/navi_to_H.cpp)
+target_link_libraries(navi_to_H  ${catkin_LIBRARIES})
+add_dependencies(
+  navi_to_H
+  ${behavior_tree_leaves_EXPORTED_TARGETS}
+  ${PROJECT_NAME}_generate_messages_cpp
+  behavior_tree_core_generate_messages_cpp
+)
+
+add_executable(send_goal example_nodes/cpp/demotree2/send_goal.cpp)
+target_link_libraries(send_goal  ${catkin_LIBRARIES})
+add_dependencies(
+  send_goal
+  ${behavior_tree_leaves_EXPORTED_TARGETS}
+  ${PROJECT_NAME}_generate_messages_cpp
+  behavior_tree_core_generate_messages_cpp
+)
 ###--------------------------------------------------

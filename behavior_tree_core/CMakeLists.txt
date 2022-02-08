@@ -118,8 +118,18 @@ target_link_libraries(gtest_ros
   ${PROJECT_NAME}
   ${GTEST_LIBRARIES})
 
+
+ #-----------------------------------# 
+#DEMO-1 COMPILITION
 add_executable(demo1 src/rehab_robot_demo/demo1.cpp)
 target_link_libraries(demo1
+  ${catkin_LIBRARIES}
+  ${PROJECT_NAME}
+  ${GTEST_LIBRARIES})
+
+#DEMO-2 COMPILITION
+add_executable(demo2 src/rehab_robot_demo/demo2.cpp)
+target_link_libraries(demo2
   ${catkin_LIBRARIES}
   ${PROJECT_NAME}
   ${GTEST_LIBRARIES})
