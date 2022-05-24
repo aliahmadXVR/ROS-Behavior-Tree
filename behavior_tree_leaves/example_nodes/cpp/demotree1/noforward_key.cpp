@@ -26,8 +26,6 @@ class BTAction
 protected:
     ros::NodeHandle nh_;
     
-  
-
     // NodeHandle instance must be created before this line. Otherwise strange errors may occur.
     actionlib::SimpleActionServer<behavior_tree_core::BTAction> as_;
     std::string action_name_;

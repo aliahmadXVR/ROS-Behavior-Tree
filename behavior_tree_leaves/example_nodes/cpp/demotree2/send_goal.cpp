@@ -18,77 +18,66 @@
 #include <actionlib/client/simple_action_client.h>
 
 
-enum Status {RUNNING, SUCCESS, FAILURE};  // BT return status
-
+enum Status {RUNNING, SUCCESS, FAILURE}; 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
+
 
 class BTAction
 {
 protected:
 
     ros::NodeHandle nh_;
-    // NodeHandle instance must be created before this line. Otherwise strange error may occur.
     actionlib::SimpleActionServer<behavior_tree_core::BTAction> as_;
     std::string action_name_;
-    // create messages that are used to published feedback/result
-    behavior_tree_core::BTFeedback feedback_;  // action feedback (SUCCESS, FAILURE)
-    behavior_tree_core::BTResult result_;  // action feedback  (same as feedback for us)
+    behavior_tree_core::BTFeedback feedback_;  
+    behavior_tree_core::BTResult result_;  
+    MoveBaseClient ac;
+    move_base_msgs::MoveBaseGoal move_base_goal;
 
-    //tell the action client that we want to spin a thread by default
-    move_base_msgs::MoveBaseGoal goal;
-    MoveBaseClient ac("move_base",true);
 
 public:
-    explicit BTAction(std::string name) :
-        as_(nh_, name, boost::bind(&BTAction::execute_callback, this, _1), false),
-        action_name_(name)
+    explicit BTAction(std::string name) : ac("move_base", true),  as_(nh_, name, boost::bind(&BTAction::execute_callback, this, _1), false),
+    action_name_(name)
     {
-        // Starts the action server
-        as_.start();
+        as_.start ();
     }
 
-    
-
-
+   
     ~BTAction(void)
     {}
 
+
     void execute_callback(const behavior_tree_core::BTGoalConstPtr &goal)
     {
+        // publish info to the console for the user
+        ROS_INFO("Starting Move to Goal Action");
+
         //wait for the action server to come up
-        while(!ac.waitForServer(ros::Duration(5.0))){
+        while(!ac.waitForServer(ros::Duration(5.0)))
+        {
             ROS_INFO("Waiting for the move_base action server to come up");
         }
+        
+        //we'll send a goal to the robot to move 1 meter forward
+        move_base_goal.target_pose.header.frame_id = "base_link";
+        move_base_goal.target_pose.header.stamp = ros::Time::now();
 
-        // publish info to the console for the user
-        ROS_INFO("Starting Action");
+        move_base_goal.target_pose.pose.position.x = 1.0;
+        move_base_goal.target_pose.pose.orientation.w = 1.0;
 
-        //wait for the action server to come up
-        while(!ac.waitForServer(ros::Duration(5.0))){};
-
-        // start executing the action
-        int i = 0;
-        while (i < 5)
+        ROS_INFO("Sending goal");
+        ac.sendGoal(move_base_goal);
+        
+        // check that preempt has not been requested by the client
+        if (as_.isPreemptRequested())
         {
-            // check that preempt has not been requested by the client
-            if (as_.isPreemptRequested())
-            {
-                ROS_INFO("Action Halted");
+            ROS_INFO("Action Halted");
 
-                // set the action state to preempted
-                as_.setPreempted();
-                break;
-            }
-            ROS_INFO("Executing Action");
-
-            ros::Duration(0.5).sleep();  // waiting for 0.5 seconds
-            i++;
+            // set the action state to preempted
+            as_.setPreempted();
         }
+        ROS_INFO("Executing Move to Goal Action");
 
-        if (i == 5)
-        {
-            set_status(SUCCESS);
-        }
     }
 
 

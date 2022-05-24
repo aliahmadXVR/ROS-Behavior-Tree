@@ -13,75 +13,84 @@
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
 #include <behavior_tree_core/BTAction.h>
-
 #include <string>
+#include <move_base_msgs/MoveBaseAction.h>
+#include <actionlib/client/simple_action_client.h>
 
 
-enum Status {RUNNING, SUCCESS, FAILURE};  // BT return status
+enum Status {RUNNING, SUCCESS, FAILURE}; 
+typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 
 class BTAction
 {
 protected:
+
     ros::NodeHandle nh_;
-    // NodeHandle instance must be created before this line. Otherwise strange error may occur.
     actionlib::SimpleActionServer<behavior_tree_core::BTAction> as_;
     std::string action_name_;
-    // create messages that are used to published feedback/result
-    behavior_tree_core::BTFeedback feedback_;  // action feedback (SUCCESS, FAILURE)
-    behavior_tree_core::BTResult result_;  // action feedback  (same as feedback for us)
-    bool run_check = true;
+    behavior_tree_core::BTFeedback feedback_;  
+    behavior_tree_core::BTResult result_;  
+    MoveBaseClient ac;
+    move_base_msgs::MoveBaseGoal move_base_goal;
+
 
 public:
-    explicit BTAction(std::string name) :
-        as_(nh_, name, boost::bind(&BTAction::execute_callback, this, _1), false),
-        action_name_(name)
+    explicit BTAction(std::string name) : ac("move_base", true),  as_(nh_, name, boost::bind(&BTAction::execute_callback, this, _1), false),
+    action_name_(name)
     {
-        // Starts the action server
-        as_.start();
+        as_.start ();
     }
-    int i = 0;
-    
 
+   
     ~BTAction(void)
     {}
 
+
     void execute_callback(const behavior_tree_core::BTGoalConstPtr &goal)
     {
-        
         // publish info to the console for the user
-        ROS_INFO("Starting Action");
-        
-        // start executing the action
-        while (i < 5)
+        ROS_INFO("Starting Move to Goal Action");
+
+        //wait for the action server to come up
+        while(!ac.waitForServer(ros::Duration(5.0)))
         {
-            // check that preempt has not been requested by the client
-            if (as_.isPreemptRequested())
-            {
-                ROS_INFO("Action Halted");
-
-                // set the action state to preempted
-                as_.setPreempted();
-                break;
-            }
-            ROS_INFO("Executing Action 1");
-
-            ros::Duration(1).sleep();  // waiting for 0.5 seconds
-            i++;
-        }
-
-        if (i == 5)
-        {
-            set_status(SUCCESS);
-            
+            ROS_INFO("Waiting for the move_base action server to come up");
         }
         
-        if (i == 6)
+        //we'll send a goal to the robot to move 1 meter forward
+        move_base_goal.target_pose.header.frame_id = "map";
+        move_base_goal.target_pose.header.stamp = ros::Time::now();
+
+        move_base_goal.target_pose.pose.position.y = 1;
+        move_base_goal.target_pose.pose.orientation.w = 1.0;
+
+        ROS_INFO("Sending goal");
+        ac.sendGoal(move_base_goal);
+
+        if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
         {
             set_status(SUCCESS);
-            
-        }  
-    } 
+            ROS_INFO("Hooray, the base moved 1 meter forward");
+        }
+        
+        else
+        ROS_INFO("The base failed to move forward 1 meter for some reason");
+
+        
+        // check that preempt has not been requested by the client
+        if (as_.isPreemptRequested())
+        {
+            ROS_INFO("Action Halted");
+
+            // set the action state to preempted
+            as_.setPreempted();
+            ac.cancelAllGoals();
+            ROS_INFO("Canceling All Goals");
+        }
+        ROS_INFO("Executing Move to Goal Action");
+
+    }
 
 
     // returns the status to the client (Behavior Tree)
@@ -113,9 +122,10 @@ public:
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "Navi_A");
+    
 
     ROS_INFO(" Enum: %d", RUNNING);
-    ROS_INFO(" Action Ready for Ticks");
+    ROS_INFO(" Send Goal Node Running");
     BTAction bt_action(ros::this_node::getName());
     ros::spin();
 

@@ -29,7 +29,6 @@ int main(int argc, char **argv)
         BT::ROSAction* navi_to_H = new BT::ROSAction("navi_to_H");
         BT::ROSAction* navi_to_A = new BT::ROSAction("navi_to_A");
 
-
         //Sequences//
         BT:: SequenceNode* sequence1 = new BT::SequenceNode("sequence1");
         BT:: SequenceNode* sequence2 = new BT::SequenceNode("sequence2");

@@ -282,9 +282,9 @@ add_dependencies(
 add_executable(send_goal example_nodes/cpp/demotree2/send_goal.cpp)
 target_link_libraries(send_goal  ${catkin_LIBRARIES})
 add_dependencies(
-  send_goal
-  ${behavior_tree_leaves_EXPORTED_TARGETS}
-  ${PROJECT_NAME}_generate_messages_cpp
-  behavior_tree_core_generate_messages_cpp
+ send_goal
+ ${behavior_tree_leaves_EXPORTED_TARGETS}
+ ${PROJECT_NAME}_generate_messages_cpp
+ behavior_tree_core_generate_messages_cpp
 )
 ###--------------------------------------------------

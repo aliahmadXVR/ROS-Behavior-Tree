@@ -13,8 +13,10 @@
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
 #include <behavior_tree_core/BTAction.h>
-
 #include <string>
+#include "std_msgs/Int16.h"
+#include "std_msgs/String.h"
+
 
 enum Status {RUNNING, SUCCESS, FAILURE};
 
@@ -29,23 +31,34 @@ protected:
     // create messages that are used to published feedback/result
     behavior_tree_core::BTFeedback feedback_;
     behavior_tree_core::BTResult result_;
+    std_msgs::Int16 input_key;
 
 public:
     explicit BTAction(std::string name) :
         as_(nh_, name, boost::bind(&BTAction::execute_callback, this, _1), false),
         action_name_(name)
     {
-        // start the action server (action in sense of Actionlib not BT action)
         as_.start();
         ROS_INFO("Condition Server Started");
     }
 
+    ros::Subscriber sub = nh_.subscribe("chatter", 1000, &BTAction::conditionSetCallback, this);
+
+
     ~BTAction(void)
     { }
+
+
+    void conditionSetCallback(const std_msgs::Int16& msg)
+    {    
+        input_key.data = msg.data;
+       
+    }
+
+
     void execute_callback(const behavior_tree_core::BTGoalConstPtr &goal)
     {
-        int a= 10;
-        if (a==5)
+        if (input_key.data==1)
         {
             set_status(SUCCESS);
         }
@@ -78,6 +91,8 @@ public:
             break;
         }
     }
+
+
 };
 
 int main(int argc, char** argv)
