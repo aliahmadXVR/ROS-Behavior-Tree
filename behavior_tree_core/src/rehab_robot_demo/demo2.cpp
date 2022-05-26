@@ -18,16 +18,22 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "demo2_Navigation");
     try
     {
-        int TickPeriod_milliseconds = 50;
+        int TickPeriod_milliseconds = 250;
 
         //Condition Nodes//
-        BT::ROSCondition* atA = new BT::ROSCondition("atA");
+        BT::ROSCondition* kitCmd = new BT::ROSCondition("kitCmd");
         BT::ROSCondition* batteryOK = new BT::ROSCondition("batteryOK");
+        BT::ROSCondition* loungeCmd = new BT::ROSCondition("loungeCmd");
+        BT::ROSCondition* entranceCmd = new BT::ROSCondition("entranceCmd");
+
 
 
         //Action Nodes//
         BT::ROSAction* navi_to_H = new BT::ROSAction("navi_to_H");
-        BT::ROSAction* navi_to_A = new BT::ROSAction("navi_to_A");
+        BT::ROSAction* GoToKit = new BT::ROSAction("GoToKit");
+        BT::ROSAction* GoTolounge = new BT::ROSAction("GoTolounge");
+        BT::ROSAction* GoToEntrance = new BT::ROSAction("GoToEntrance");
+
 
         //Sequences//
         BT:: SequenceNode* sequence1 = new BT::SequenceNode("sequence1");
@@ -36,18 +42,29 @@ int main(int argc, char **argv)
         //Fallback//
         BT:: FallbackNode* fallback1 = new BT:: FallbackNode("fallback1");
         BT:: FallbackNode* fallback2 = new BT:: FallbackNode("fallback2");
+        BT:: FallbackNode* fallback3 = new BT:: FallbackNode("fallback3");
+        BT:: FallbackNode* fallback4 = new BT:: FallbackNode("fallback4");
+
 
 
         //Creating Tree here//
         sequence1->AddChild(fallback1);
-        sequence1->AddChild(sequence2);
+        sequence1->AddChild(fallback2);
+        sequence1->AddChild(fallback3);
+        sequence1->AddChild(fallback4);
 
         fallback1->AddChild(batteryOK);
         fallback1->AddChild(navi_to_H);
 
-        sequence2->AddChild(fallback2);
-        fallback2->AddChild(atA);
-        fallback2->AddChild(navi_to_A);
+        fallback2->AddChild(kitCmd);
+        fallback2->AddChild(GoToKit);
+
+        fallback3->AddChild(loungeCmd);
+        fallback3->AddChild(GoTolounge);
+
+        fallback4->AddChild(entranceCmd);
+        fallback4->AddChild(GoToEntrance);
+
 
         //Execute the BT from Root Node//
         Execute(sequence1, TickPeriod_milliseconds);  // from BehaviorTree.cpp

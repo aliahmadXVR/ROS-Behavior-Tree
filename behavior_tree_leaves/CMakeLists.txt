@@ -243,10 +243,10 @@ target_link_libraries(
 )
 
 #----------------FOR DEMO-2-----------------------#
-add_executable(atA example_nodes/cpp/demotree2/atA.cpp)
-target_link_libraries(atA  ${catkin_LIBRARIES})
+add_executable(kitCmd example_nodes/cpp/demotree2/kitCmd.cpp)
+target_link_libraries(kitCmd  ${catkin_LIBRARIES})
 add_dependencies(
-  atA
+  kitCmd
   ${behavior_tree_leaves_EXPORTED_TARGETS}
   ${PROJECT_NAME}_generate_messages_cpp
   behavior_tree_core_generate_messages_cpp
@@ -261,10 +261,10 @@ add_dependencies(
   behavior_tree_core_generate_messages_cpp
 )
 
-add_executable(navi_to_A example_nodes/cpp/demotree2/navi_to_A.cpp)
-target_link_libraries(navi_to_A  ${catkin_LIBRARIES})
+add_executable(GoToKit example_nodes/cpp/demotree2/GoToKit.cpp)
+target_link_libraries(GoToKit  ${catkin_LIBRARIES})
 add_dependencies(
-  navi_to_A
+  GoToKit
   ${behavior_tree_leaves_EXPORTED_TARGETS}
   ${PROJECT_NAME}_generate_messages_cpp
   behavior_tree_core_generate_messages_cpp
@@ -286,5 +286,43 @@ add_dependencies(
  ${behavior_tree_leaves_EXPORTED_TARGETS}
  ${PROJECT_NAME}_generate_messages_cpp
  behavior_tree_core_generate_messages_cpp
+)
+
+
+add_executable(loungeCmd example_nodes/cpp/demotree2/loungeCmd.cpp)
+target_link_libraries(loungeCmd  ${catkin_LIBRARIES})
+add_dependencies(
+  loungeCmd
+  ${behavior_tree_leaves_EXPORTED_TARGETS}
+  ${PROJECT_NAME}_generate_messages_cpp
+  behavior_tree_core_generate_messages_cpp
+)
+
+add_executable(entranceCmd example_nodes/cpp/demotree2/entranceCmd.cpp)
+target_link_libraries(entranceCmd  ${catkin_LIBRARIES})
+add_dependencies(
+  entranceCmd
+  ${behavior_tree_leaves_EXPORTED_TARGETS}
+  ${PROJECT_NAME}_generate_messages_cpp
+  behavior_tree_core_generate_messages_cpp
+)
+
+
+add_executable(GoTolounge example_nodes/cpp/demotree2/GoTolounge.cpp)
+target_link_libraries(GoTolounge  ${catkin_LIBRARIES})
+add_dependencies(
+  GoTolounge
+  ${behavior_tree_leaves_EXPORTED_TARGETS}
+  ${PROJECT_NAME}_generate_messages_cpp
+  behavior_tree_core_generate_messages_cpp
+)
+
+add_executable(GoToEntrance example_nodes/cpp/demotree2/GoToEntrance.cpp)
+target_link_libraries(GoToEntrance  ${catkin_LIBRARIES})
+add_dependencies(
+  GoToEntrance
+  ${behavior_tree_leaves_EXPORTED_TARGETS}
+  ${PROJECT_NAME}_generate_messages_cpp
+  behavior_tree_core_generate_messages_cpp
 )
 ###--------------------------------------------------

@@ -32,6 +32,7 @@ protected:
     behavior_tree_core::BTFeedback feedback_;
     behavior_tree_core::BTResult result_;
     std_msgs::Int16 input_key;
+    std_msgs::Int16 internal_comm_var;
 
 public:
     explicit BTAction(std::string name) :
@@ -42,8 +43,7 @@ public:
         ROS_INFO("Condition Server Started");
     }
 
-    ros::Subscriber sub = nh_.subscribe("chatter", 1000, &BTAction::conditionSetCallback, this);
-
+    ros::Subscriber sub = nh_.subscribe("cmd_frm_tablet", 1000, &BTAction::conditionSetCallback, this);
 
     ~BTAction(void)
     { }
@@ -52,19 +52,18 @@ public:
     void conditionSetCallback(const std_msgs::Int16& msg)
     {    
         input_key.data = msg.data;
-       
     }
 
 
     void execute_callback(const behavior_tree_core::BTGoalConstPtr &goal)
     {
-        if (input_key.data==1)
+        if (input_key.data==3)
         {
-            set_status(SUCCESS);
+            set_status(FAILURE);  
         }
         else
         {
-            set_status(FAILURE);
+            set_status(SUCCESS);
         }
     }
 
@@ -98,9 +97,9 @@ public:
 int main(int argc, char** argv)
 {
     
-    ros::init(argc, argv, "atA");
+    ros::init(argc, argv, "entranceCmd");
     ROS_INFO(" Enum: %d", RUNNING);
-    ROS_INFO(" atA condition Ready for Ticks");
+    ROS_INFO(" NavCmd condition Ready for Ticks");
     BTAction bt_action(ros::this_node::getName());
     ros::spin();
     return 0;

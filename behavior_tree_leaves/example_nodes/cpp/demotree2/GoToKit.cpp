@@ -16,8 +16,10 @@
 #include <string>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
+#include "std_msgs/Int16.h"
+#include "std_msgs/String.h"
 
-
+using namespace std;
 enum Status {RUNNING, SUCCESS, FAILURE}; 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
@@ -33,7 +35,8 @@ protected:
     behavior_tree_core::BTResult result_;  
     MoveBaseClient ac;
     move_base_msgs::MoveBaseGoal move_base_goal;
-
+    enum LOC_TAG{kitchen_loc=1, lounge_loc=2, entrance_loc=3, lobby_loc=4, tvRoom_loc=5, bedRoom_loc=6, away_loc=7};
+    std_msgs::Int16 location_tag;
 
 public:
     explicit BTAction(std::string name) : ac("move_base", true),  as_(nh_, name, boost::bind(&BTAction::execute_callback, this, _1), false),
@@ -42,42 +45,14 @@ public:
         as_.start ();
     }
 
-   
     ~BTAction(void)
     {}
 
 
     void execute_callback(const behavior_tree_core::BTGoalConstPtr &goal)
-    {
-        // publish info to the console for the user
-        ROS_INFO("Starting Move to Goal Action");
-
-        //wait for the action server to come up
-        while(!ac.waitForServer(ros::Duration(5.0)))
-        {
-            ROS_INFO("Waiting for the move_base action server to come up");
-        }
-        
-        //we'll send a goal to the robot to move 1 meter forward
-        move_base_goal.target_pose.header.frame_id = "map";
-        move_base_goal.target_pose.header.stamp = ros::Time::now();
-
-        move_base_goal.target_pose.pose.position.y = 1;
-        move_base_goal.target_pose.pose.orientation.w = 1.0;
-
-        ROS_INFO("Sending goal");
-        ac.sendGoal(move_base_goal);
-
-        if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-        {
-            set_status(SUCCESS);
-            ROS_INFO("Hooray, the base moved 1 meter forward");
-        }
-        
-        else
-        ROS_INFO("The base failed to move forward 1 meter for some reason");
-
-        
+    {   
+        ROS_INFO("**Navigation Action Started ---");
+    
         // check that preempt has not been requested by the client
         if (as_.isPreemptRequested())
         {
@@ -85,12 +60,36 @@ public:
 
             // set the action state to preempted
             as_.setPreempted();
-            ac.cancelAllGoals();
+            ac.cancelGoal();
             ROS_INFO("Canceling All Goals");
         }
-        ROS_INFO("Executing Move to Goal Action");
+    
+        ROS_INFO("**Going to Destination A");
+        ROS_INFO("**Canceling Prev Goals First**");
+        //ac.cancelAllGoals();
+        
+        // while(!ac.waitForServer(ros::Duration(5.0)))
+        // {
+        //     ROS_INFO("Waiting for the move_base action server to come up");
+        // }
+        
+        move_base_goal.target_pose.header.frame_id = "map";
+        move_base_goal.target_pose.header.stamp = ros::Time::now();
 
+        move_base_goal.target_pose.pose.position.x = 2.88;
+        move_base_goal.target_pose.pose.position.y = 5.31;
+        move_base_goal.target_pose.pose.position.z = 0.0;
+        move_base_goal.target_pose.pose.orientation.w = 1.0;
+
+        ROS_INFO("**Sending New goal A");
+        ac.sendGoal(move_base_goal);
+
+        // ros::Duration(5).sleep();
+        // ac.cancelAllGoals();
+        // ROS_INFO("Canceling goals after 5.0 Sec");
+        set_status(SUCCESS);
     }
+
 
 
     // returns the status to the client (Behavior Tree)
@@ -121,7 +120,7 @@ public:
 
 int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "Navi_A");
+    ros::init(argc, argv, "GoToKit");
     
 
     ROS_INFO(" Enum: %d", RUNNING);

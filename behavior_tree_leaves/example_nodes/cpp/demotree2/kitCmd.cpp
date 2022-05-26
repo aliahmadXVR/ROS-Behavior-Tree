@@ -13,9 +13,9 @@
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
 #include <behavior_tree_core/BTAction.h>
-
 #include <string>
 #include "std_msgs/Int16.h"
+#include "std_msgs/String.h"
 
 
 enum Status {RUNNING, SUCCESS, FAILURE};
@@ -31,38 +31,40 @@ protected:
     // create messages that are used to published feedback/result
     behavior_tree_core::BTFeedback feedback_;
     behavior_tree_core::BTResult result_;
-    std_msgs::Int16 battery_voltage;
-    
+    std_msgs::Int16 input_key;
+    std_msgs::Int16 internal_comm_var;
 
 public:
     explicit BTAction(std::string name) :
         as_(nh_, name, boost::bind(&BTAction::execute_callback, this, _1), false),
         action_name_(name)
     {
-        // start the action server (action in sense of Actionlib not BT action)
         as_.start();
         ROS_INFO("Condition Server Started");
     }
 
-    ros::Subscriber sub = nh_.subscribe("battery_health", 1000, &BTAction::BatteryHealthCallback, this);
+    ros::Subscriber sub = nh_.subscribe("cmd_frm_tablet", 1000, &BTAction::conditionSetCallback, this);
+
 
     ~BTAction(void)
     { }
 
-    void BatteryHealthCallback(const std_msgs::Int16& msg)
+
+    void conditionSetCallback(const std_msgs::Int16& msg)
     {    
-        battery_voltage.data = msg.data;
+        input_key.data = msg.data;
     }
+
 
     void execute_callback(const behavior_tree_core::BTGoalConstPtr &goal)
     {
-        if (battery_voltage.data >= 40)
+        if (input_key.data==1)
         {
-            set_status(SUCCESS);
+            set_status(FAILURE);
         }
         else
         {
-            set_status(FAILURE);
+            set_status(SUCCESS);
         }
     }
 
@@ -89,17 +91,17 @@ public:
             break;
         }
     }
+
+
 };
 
 int main(int argc, char** argv)
 {
     
-    ros::init(argc, argv, "batteryOK");
+    ros::init(argc, argv, "kitCmd");
     ROS_INFO(" Enum: %d", RUNNING);
-    ROS_INFO(" condition Ready for Ticks");
+    ROS_INFO(" NavCmd condition Ready for Ticks");
     BTAction bt_action(ros::this_node::getName());
-    std::cout<<" This node Ends here---------------------------"<<std::endl;
-
     ros::spin();
     return 0;
 }

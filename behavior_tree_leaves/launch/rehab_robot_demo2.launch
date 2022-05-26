@@ -1,8 +1,14 @@
 <launch>
 
-<node name="atA"              pkg="behavior_tree_leaves"  type="atA"               output="screen" />
-<node name="batteryOK"        pkg="behavior_tree_leaves"  type="batteryOK"         output="screen" /> 
-<node name="navi_to_A"        pkg="behavior_tree_leaves"  type="navi_to_A"         output="screen" /> 
+<node name="kitCmd"           pkg="behavior_tree_leaves"  type="kitCmd"               output="screen" />
+<node name="loungeCmd"        pkg="behavior_tree_leaves"  type="loungeCmd"            output="screen" />
+<node name="entranceCmd"      pkg="behavior_tree_leaves"  type="entranceCmd"          output="screen" />
+
+<node name="batteryOK"        pkg="behavior_tree_leaves"  type="batteryOK"            output="screen" /> 
+<node name="GoToKit"          pkg="behavior_tree_leaves"  type="GoToKit"              output="screen"  launch-prefix="xterm -e" /> 
+<node name="GoTolounge"       pkg="behavior_tree_leaves"  type="GoTolounge"           output="screen"  /> 
+<node name="GoToEntrance"     pkg="behavior_tree_leaves"  type="GoToEntrance"         output="screen"   /> 
+
 <node name="navi_to_H"        pkg="behavior_tree_leaves"  type="navi_to_H"         output="screen" /> 
 
 
