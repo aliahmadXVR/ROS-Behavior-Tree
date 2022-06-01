@@ -76,8 +76,8 @@ public:
         move_base_goal.target_pose.header.frame_id = "map";
         move_base_goal.target_pose.header.stamp = ros::Time::now();
 
-        move_base_goal.target_pose.pose.position.x = 6.7;
-        move_base_goal.target_pose.pose.position.y = 2.4;
+        move_base_goal.target_pose.pose.position.x = 0.21;
+        move_base_goal.target_pose.pose.position.y = 4.20;
         move_base_goal.target_pose.pose.position.z = 0.0;
         move_base_goal.target_pose.pose.orientation.w = 1.0;
 
