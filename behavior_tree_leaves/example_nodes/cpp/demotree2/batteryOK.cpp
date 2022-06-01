@@ -31,7 +31,7 @@ protected:
     // create messages that are used to published feedback/result
     behavior_tree_core::BTFeedback feedback_;
     behavior_tree_core::BTResult result_;
-    std_msgs::Int16 battery_voltage;
+    std_msgs::Int16 battery_voltage; //init with Full battery
     
 
 public:
@@ -42,6 +42,7 @@ public:
         // start the action server (action in sense of Actionlib not BT action)
         as_.start();
         ROS_INFO("Condition Server Started");
+        battery_voltage.data = 40;
     }
 
     ros::Subscriber sub = nh_.subscribe("battery_health", 1000, &BTAction::BatteryHealthCallback, this);

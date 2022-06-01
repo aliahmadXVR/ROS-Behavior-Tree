@@ -9,7 +9,7 @@
 <node name="GoTolounge"       pkg="behavior_tree_leaves"  type="GoTolounge"           output="screen"  /> 
 <node name="GoToEntrance"     pkg="behavior_tree_leaves"  type="GoToEntrance"         output="screen"   /> 
 
-<node name="navi_to_H"        pkg="behavior_tree_leaves"  type="navi_to_H"         output="screen" /> 
+<node name="navi_to_H"        pkg="behavior_tree_leaves"  type="navi_to_H"         output="screen" launch-prefix="xterm -e"/> 
 
 
   

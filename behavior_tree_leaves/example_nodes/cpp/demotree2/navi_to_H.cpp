@@ -13,11 +13,15 @@
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
 #include <behavior_tree_core/BTAction.h>
+#include <actionlib/client/simple_action_client.h>
+#include <move_base_msgs/MoveBaseAction.h>
+
 
 #include <string>
 
 
 enum Status {RUNNING, SUCCESS, FAILURE};  // BT return status
+typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 
 class BTAction
@@ -27,51 +31,65 @@ protected:
     // NodeHandle instance must be created before this line. Otherwise strange error may occur.
     actionlib::SimpleActionServer<behavior_tree_core::BTAction> as_;
     std::string action_name_;
+    MoveBaseClient ac;
+    move_base_msgs::MoveBaseGoal move_base_goal;
     // create messages that are used to published feedback/result
     behavior_tree_core::BTFeedback feedback_;  // action feedback (SUCCESS, FAILURE)
     behavior_tree_core::BTResult result_;  // action feedback  (same as feedback for us)
 
 
 public:
-    explicit BTAction(std::string name) :
-        as_(nh_, name, boost::bind(&BTAction::execute_callback, this, _1), false),
-        action_name_(name)
+    explicit BTAction(std::string name) : ac("move_base", true),  as_(nh_, name, boost::bind(&BTAction::execute_callback, this, _1), false),
+    action_name_(name)
     {
         // Starts the action server
         as_.start();
     }
+
+
 
     ~BTAction(void)
     {}
 
     void execute_callback(const behavior_tree_core::BTGoalConstPtr &goal)
     {
-        // publish info to the console for the user
-        ROS_INFO("Starting Action");
+        ROS_INFO("**Navigation Action Started ---");
+       
+        // check that preempt has not been requested by the client
+        if (as_.isPreemptRequested())
+        {
+            ROS_INFO("Action Halted");
+
+            // set the action state to preempted
+            as_.setPreempted();
+            ac.cancelGoal();
+            ROS_INFO("Canceling All Goals");
+        }
+    
+        ROS_INFO("**Going to Destination A");
+        ROS_INFO("**Canceling Prev Goals First**");
+        ac.cancelAllGoals();
         
-        // start executing the action
-        int i = 0;
-        while (i < 5)
-        {
-            // check that preempt has not been requested by the client
-            if (as_.isPreemptRequested())
-            {
-                ROS_INFO("Action Halted");
+        // while(!ac.waitForServer(ros::Duration(5.0)))
+        // {
+        //     ROS_INFO("Waiting for the move_base action server to come up");
+        // }
+        
+        move_base_goal.target_pose.header.frame_id = "map";
+        move_base_goal.target_pose.header.stamp = ros::Time::now();
 
-                // set the action state to preempted
-                as_.setPreempted();
-                break;
-            }
-            ROS_INFO("Executing Action");
+        move_base_goal.target_pose.pose.position.x = 2.42;
+        move_base_goal.target_pose.pose.position.y = 2.47;
+        move_base_goal.target_pose.pose.position.z = 0.0;
+        move_base_goal.target_pose.pose.orientation.w = 1.0;
 
-            ros::Duration(0.5).sleep();  // waiting for 0.5 seconds
-            i++;
-        }
+        ROS_INFO("**Sending New goal A");
+        ac.sendGoal(move_base_goal);
 
-        if (i == 5)
-        {
-            set_status(SUCCESS);
-        }
+        ros::Duration(5).sleep();
+        ac.cancelAllGoals();
+        ROS_INFO("Canceling goals after 5.0 Sec");
+        set_status(SUCCESS);
     }
 
 
